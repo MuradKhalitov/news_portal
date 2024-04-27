@@ -1,6 +1,5 @@
-package com.example.NewsManager.utils;
+package com.example.NewsManager.mapper;
 
-import com.example.NewsManager.config.NewsMapper;
 import com.example.NewsManager.dto.CategoryDTO;
 import com.example.NewsManager.dto.CommentDTO;
 import com.example.NewsManager.dto.NewsDTO;
@@ -30,16 +29,13 @@ public class DTOMapper {
     private final NewsRepository newsRepository;
     private final CategoryRepository categoryRepository;
 
-    private final NewsMapper newsMapper;
-
     @Autowired
-    public DTOMapper(UserService userService, CategoryService categoryService, UserRepository userRepository, NewsRepository newsRepository, CategoryRepository categoryRepository, NewsMapper newsMapper) {
+    public DTOMapper(UserService userService, CategoryService categoryService, UserRepository userRepository, NewsRepository newsRepository, CategoryRepository categoryRepository) {
         this.userService = userService;
         this.categoryService = categoryService;
         this.userRepository = userRepository;
         this.newsRepository = newsRepository;
         this.categoryRepository = categoryRepository;
-        this.newsMapper = newsMapper;
     }
 
     public UserDTO convertToDTO(User user) {
@@ -59,18 +55,17 @@ public class DTOMapper {
     }
 
     public NewsDTO convertToDTO(News news) {
-//        NewsDTO newsDTO = new NewsDTO();
-//        newsDTO.setId(news.getId());
-//        newsDTO.setTitle(news.getTitle());
-//        newsDTO.setContent(news.getContent());
-//        newsDTO.setAuthor(news.getAuthor().getId());
-//        newsDTO.setCategory(news.getId());
-//        List<CommentDTO> commentDTOList = news.getComments().stream()
-//                .map(this::convertToDTO)
-//                .collect(Collectors.toList());
-//        newsDTO.setComments(commentDTOList);
-//        return newsDTO;
-        return newsMapper.newsToNewsDTO(news);
+        NewsDTO newsDTO = new NewsDTO();
+        newsDTO.setId(news.getId());
+        newsDTO.setTitle(news.getTitle());
+        newsDTO.setContent(news.getContent());
+        newsDTO.setAuthor(news.getAuthor().getId());
+        newsDTO.setCategory(news.getId());
+        List<CommentDTO> commentDTOList = news.getComments().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+        newsDTO.setComments(commentDTOList);
+        return newsDTO;
     }
 
     public CommentDTO convertToDTO(Comment comment) {

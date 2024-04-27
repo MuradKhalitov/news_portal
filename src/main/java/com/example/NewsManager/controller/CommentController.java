@@ -2,7 +2,7 @@ package com.example.NewsManager.controller;
 import com.example.NewsManager.dto.CommentDTO;
 import com.example.NewsManager.model.Comment;
 import com.example.NewsManager.service.CommentService;
-import com.example.NewsManager.utils.DTOMapper;
+import com.example.NewsManager.mapper.DTOMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
