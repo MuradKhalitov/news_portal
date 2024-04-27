@@ -1,0 +1,16 @@
+package com.example.NewsManager.validation;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+import org.springframework.stereotype.Component;
+
+@Aspect
+@Component
+public class AccessControlAspect {
+
+    @Before("@annotation(AccessControl) && args(userId, ..)")
+    public void checkAccess(Long userId) {
+        // Здесь реализуется логика проверки доступа
+        // Например, проверка прав пользователя на редактирование и удаление
+        // Можно выбросить исключение AccessDeniedException, если доступ запрещен
+    }
+}
