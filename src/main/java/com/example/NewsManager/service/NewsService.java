@@ -1,9 +1,15 @@
 package com.example.NewsManager.service;
+
+//import com.example.NewsManager.aop.Autentificator;
 import com.example.NewsManager.exception.NewsNotFoundException;
+import com.example.NewsManager.model.Category;
 import com.example.NewsManager.model.News;
 import com.example.NewsManager.repository.NewsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service
@@ -20,8 +26,9 @@ public class NewsService {
         return newsRepository.save(news);
     }
 
-    public List<News> getAllNews() {
-        return newsRepository.findAll();
+    public List<News> getAllNews(PageRequest pageRequest) {
+        Page<News> page = newsRepository.findAll(pageRequest);
+        return page.getContent();
     }
 
     public News getNewsById(Long id) {
@@ -29,6 +36,7 @@ public class NewsService {
                 .orElseThrow(() -> new NewsNotFoundException("News with id " + id + " not found"));
     }
 
+   // @Autentificator
     public News updateNews(Long id, News updatedNews) {
         News news = getNewsById(id);
         news.setTitle(updatedNews.getTitle());

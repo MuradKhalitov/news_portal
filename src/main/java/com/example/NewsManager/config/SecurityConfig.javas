@@ -1,22 +1,70 @@
 package com.example.NewsManager.config;
+
+import com.example.NewsManager.service.MyUserDetailsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractAuthenticationFilterConfigurer;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
+//@Configuration
 //@EnableWebSecurity
 public class SecurityConfig {
 
+
+
+
+//    @Autowired
+//    MyUserDetailsService myUserDetailsService;
 //    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http
-//            .authorizeRequests()
-//            .anyRequest()
-//            .authenticated()
-//            .and()
-//            .httpBasic();;
-//        return http.build();
+//    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+//        return httpSecurity.authorizeHttpRequests(registry->{
+//            registry.requestMatchers("/api/users/create").permitAll();
+//            registry.requestMatchers("/api/news/create").hasRole("USER");
+//            registry.requestMatchers("/api/categories/create").hasRole("ADMIN");
+//            registry.anyRequest().authenticated();
+//        })
+//                .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
+//                .build();
 //    }
-
-
+//    @Bean
+//    public UserDetailsService userDetailsService(){
+//        UserDetails normalUser = User.builder()
+//                .username("user")
+//                .password("$2a$12$92Osup2ivCFk5g3zrGxlM.Is0uXm2Um6VlBXMWvqas0mhh9anr5Di") // пароль - "111"
+//                .roles("USER")
+//                .build();
+//        UserDetails adminUser = User.builder()
+//                .username("admin")
+//                .password("$2a$12$PzdD5i5LUu9IRstehtNfb.W1ITG.LavM0el7On4qNnJEc68zg/GWC") // пароль - "333"
+//                .roles("ADMIN", "USER")
+//                .build();
+//
+//        return new InMemoryUserDetailsManager(normalUser, adminUser);
+//    }
+//    @Bean
+//    public UserDetailsService userDetailsService(){
+//        return myUserDetailsService;
+//    }
+//    @Bean
+//    AuthenticationProvider authenticationProvider(){
+//        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+//        provider.setUserDetailsService(userDetailsService());
+//        provider.setPasswordEncoder(passwordEncoder());
+//        return provider;
+//    }
+//    @Bean
+//    public PasswordEncoder passwordEncoder(){
+//        return new BCryptPasswordEncoder();
+//    }
 }

@@ -1,9 +1,10 @@
 package com.example.NewsManager.controller;
 import com.example.NewsManager.dto.CommentDTO;
+import com.example.NewsManager.mapper.CommentMapper;
 import com.example.NewsManager.model.Comment;
 import com.example.NewsManager.service.CommentService;
-import com.example.NewsManager.mapper.DTOMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,43 +16,45 @@ import java.util.stream.Collectors;
 public class CommentController {
 
     private final CommentService commentService;
-    private final DTOMapper dtoMapper;
+    private final CommentMapper commentMapper;
 
     @Autowired
-    public CommentController(CommentService commentService, DTOMapper dtoMapper) {
+    public CommentController(CommentService commentService, CommentMapper commentMapper) {
         this.commentService = commentService;
-        this.dtoMapper = dtoMapper;
+        this.commentMapper = commentMapper;
     }
 
     @PostMapping("/create")
     public ResponseEntity<CommentDTO> createComment(@RequestBody CommentDTO commentDTO) {
-        Comment comment = dtoMapper.convertToEntity(commentDTO);
+        Comment comment = commentMapper.convertToEntity(commentDTO);
         Comment createdComment = commentService.createComment(comment);
-        CommentDTO createdCommentDTO = dtoMapper.convertToDTO(createdComment);
+        CommentDTO createdCommentDTO = commentMapper.convertToDTO(createdComment);
         return new ResponseEntity<>(createdCommentDTO, HttpStatus.CREATED);
     }
 
     @GetMapping("/news/{newsId}")
-    public ResponseEntity<List<CommentDTO>> getCommentsByNewsId(@PathVariable Long newsId) {
-        List<Comment> comments = commentService.getCommentsByNewsId(newsId);
+    public List<CommentDTO> getCommentsByNewsId(@PathVariable Long newsId,
+                                                                @RequestParam(required = false, defaultValue = "0") int page,
+                                                                @RequestParam(required = false, defaultValue = "2") int size) {
+        List<Comment> comments = commentService.getCommentsByNewsId(newsId, PageRequest.of(page, size));
         List<CommentDTO> commentDTOs = comments.stream()
-                .map(dtoMapper::convertToDTO)
+                .map(commentMapper::convertToDTO)
                 .collect(Collectors.toList());
-        return new ResponseEntity<>(commentDTOs, HttpStatus.OK);
+        return commentDTOs;
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<CommentDTO> getCommentById(@PathVariable Long id) {
         Comment comment = commentService.getCommentById(id);
-        CommentDTO commentDTO = dtoMapper.convertToDTO(comment);
+        CommentDTO commentDTO = commentMapper.convertToDTO(comment);
         return new ResponseEntity<>(commentDTO, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<CommentDTO> updateComment(@PathVariable Long id, @RequestBody CommentDTO commentDTO) {
-        Comment comment = dtoMapper.convertToEntity(commentDTO);
+        Comment comment = commentMapper.convertToEntity(commentDTO);
         Comment updatedComment = commentService.updateComment(id, comment);
-        CommentDTO updatedCommentDTO = dtoMapper.convertToDTO(updatedComment);
+        CommentDTO updatedCommentDTO = commentMapper.convertToDTO(updatedComment);
         return new ResponseEntity<>(updatedCommentDTO, HttpStatus.OK);
     }
 

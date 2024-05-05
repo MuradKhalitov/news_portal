@@ -3,6 +3,8 @@ import com.example.NewsManager.exception.CategoryNotFoundException;
 import com.example.NewsManager.model.Category;
 import com.example.NewsManager.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -20,8 +22,9 @@ public class CategoryService {
         return categoryRepository.save(category);
     }
 
-    public List<Category> getAllCategories() {
-        return categoryRepository.findAll();
+    public List<Category> getAllCategories(PageRequest pageRequest) {
+        Page<Category> page = categoryRepository.findAll(pageRequest);
+        return page.getContent();
     }
 
     public Category getCategoryById(Long id) {

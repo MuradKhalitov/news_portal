@@ -1,0 +1,56 @@
+package com.example.NewsManager.aop;
+
+import com.example.NewsManager.exception.AccessDeniedException;
+import com.example.NewsManager.model.News;
+import com.example.NewsManager.service.NewsService;
+import lombok.extern.slf4j.Slf4j;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.stereotype.Component;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+
+@Aspect
+@Component
+@Slf4j
+public class AutentificatorAspect {
+    private final NewsService service;
+
+    public AutentificatorAspect(NewsService service) {
+        this.service = service;
+    }
+
+    @Around("@annotation(com.example.NewsManager.aop.Autentificator)")
+    public Object authAround(ProceedingJoinPoint joinPoint) throws Throwable {
+        //Long newsOldId = null;
+        News updateNews = null;
+        MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
+        if ((methodSignature.getName().equals("updateNews")) || (methodSignature.getName().equals("deleteNews"))) {
+//            Object[] arguments = joinPoint.getArgs();
+//            for (Object arg : arguments) {
+//                if (arg instanceof Long) {
+//                    newsOldId = (Long) arg;
+//                } else if (arg instanceof News) {
+//                    updateNews = (News) arg;
+//                }
+//            }
+//            if (updateNews != null && newsOldId != null) {
+            Object[] arguments = joinPoint.getArgs();
+            for (Object arg : arguments) {
+                if (arg instanceof News) {
+                    updateNews = (News) arg;
+                }
+            }
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName(); // Получаем имя текущего пользователя
+            //Long authorId = service.getNewsById(newsOldId).getAuthor().getId();
+            if (!updateNews.getAuthor().getUsername().equals(username)) {
+                throw new AccessDeniedException("Недостаточно прав для редактирования или удаления новости");
+            }
+        }
+        Object result = joinPoint.proceed();
+        return result;
+    }
+}

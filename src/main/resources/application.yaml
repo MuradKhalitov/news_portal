@@ -13,8 +13,6 @@ spring:
       hibernate:
         show-sql: true
         format_sql: true
-#  security:
-#    user:
-#      password: admin
+
 
 

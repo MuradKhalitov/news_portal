@@ -1,9 +1,10 @@
 package com.example.NewsManager.controller;
 import com.example.NewsManager.dto.CategoryDTO;
+import com.example.NewsManager.mapper.CategoryMapper;
 import com.example.NewsManager.model.Category;
 import com.example.NewsManager.service.CategoryService;
-import com.example.NewsManager.mapper.DTOMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,43 +16,43 @@ import java.util.stream.Collectors;
 public class CategoryController {
 
     private final CategoryService categoryService;
-    private final DTOMapper dtoMapper;
+    private final CategoryMapper categoryMapper;
 
     @Autowired
-    public CategoryController(CategoryService categoryService, DTOMapper dtoMapper) {
+    public CategoryController(CategoryService categoryService, CategoryMapper categoryMapper) {
         this.categoryService = categoryService;
-        this.dtoMapper = dtoMapper;
+        this.categoryMapper = categoryMapper;
     }
 
     @PostMapping("/create")
     public ResponseEntity<CategoryDTO> createCategory(@RequestBody CategoryDTO categoryDTO) {
-        Category category = dtoMapper.convertToEntity(categoryDTO);
+        Category category = categoryMapper.convertToEntity(categoryDTO);
         Category createdCategory = categoryService.createCategory(category);
-        CategoryDTO createdCategoryDTO = dtoMapper.convertToDTO(createdCategory);
+        CategoryDTO createdCategoryDTO = categoryMapper.convertToDTO(createdCategory);
         return new ResponseEntity<>(createdCategoryDTO, HttpStatus.CREATED);
     }
-
     @GetMapping("/all")
-    public ResponseEntity<List<CategoryDTO>> getAllCategories() {
-        List<Category> categories = categoryService.getAllCategories();
+    public List<CategoryDTO> getAllCategories(@RequestParam(required = false, defaultValue = "0") int page,
+                                              @RequestParam(required = false, defaultValue = "2") int size) {
+        List<Category> categories = categoryService.getAllCategories(PageRequest.of(page, size));
         List<CategoryDTO> categoryDTOs = categories.stream()
-                .map(dtoMapper::convertToDTO)
+                .map(categoryMapper::convertToDTO)
                 .collect(Collectors.toList());
-        return new ResponseEntity<>(categoryDTOs, HttpStatus.OK);
+        return categoryDTOs;
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<CategoryDTO> getCategoryById(@PathVariable Long id) {
         Category category = categoryService.getCategoryById(id);
-        CategoryDTO categoryDTO = dtoMapper.convertToDTO(category);
+        CategoryDTO categoryDTO = categoryMapper.convertToDTO(category);
         return new ResponseEntity<>(categoryDTO, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<CategoryDTO> updateCategory(@PathVariable Long id, @RequestBody CategoryDTO categoryDTO) {
-        Category category = dtoMapper.convertToEntity(categoryDTO);
+        Category category = categoryMapper.convertToEntity(categoryDTO);
         Category updatedCategory = categoryService.updateCategory(id, category);
-        CategoryDTO updatedCategoryDTO = dtoMapper.convertToDTO(updatedCategory);
+        CategoryDTO updatedCategoryDTO = categoryMapper.convertToDTO(updatedCategory);
         return new ResponseEntity<>(updatedCategoryDTO, HttpStatus.OK);
     }
 

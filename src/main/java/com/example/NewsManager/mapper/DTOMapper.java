@@ -7,8 +7,8 @@ import com.example.NewsManager.dto.UserDTO;
 import com.example.NewsManager.exception.CategoryNotFoundException;
 import com.example.NewsManager.model.Category;
 import com.example.NewsManager.model.Comment;
-import com.example.NewsManager.model.News;
 import com.example.NewsManager.model.User;
+import com.example.NewsManager.model.News;
 import com.example.NewsManager.repository.CategoryRepository;
 import com.example.NewsManager.repository.NewsRepository;
 import com.example.NewsManager.repository.UserRepository;
@@ -47,11 +47,25 @@ public class DTOMapper {
         return userDTO;
     }
 
+    public User convertToEntity(UserDTO userDTO) {
+        User user = new User();
+        user.setUsername(userDTO.getUsername());
+        user.setEmail(userDTO.getEmail());
+        user.setPassword(userDTO.getPassword());
+        return user;
+    }
+
     public CategoryDTO convertToDTO(Category category) {
         CategoryDTO categoryDTO = new CategoryDTO();
         categoryDTO.setId(category.getId());
         categoryDTO.setName(category.getName());
         return categoryDTO;
+    }
+
+    public Category convertToEntity(CategoryDTO categoryDTO) {
+        Category category = new Category();
+        category.setName(categoryDTO.getName());
+        return category;
     }
 
     public NewsDTO convertToDTO(News news) {
@@ -66,23 +80,6 @@ public class DTOMapper {
                 .collect(Collectors.toList());
         newsDTO.setComments(commentDTOList);
         return newsDTO;
-    }
-
-    public CommentDTO convertToDTO(Comment comment) {
-        CommentDTO commentDTO = new CommentDTO();
-        commentDTO.setId(comment.getId());
-        commentDTO.setContent(comment.getContent());
-        commentDTO.setAuthor(comment.getAuthor().getId());
-        commentDTO.setNews(comment.getNews().getId());
-        return commentDTO;
-    }
-
-    public User convertToEntity(UserDTO userDTO) {
-        User user = new User();
-        user.setUsername(userDTO.getUsername());
-        user.setEmail(userDTO.getEmail());
-        user.setPassword(userDTO.getPassword());
-        return user;
     }
 
     public News convertToEntity(NewsDTO newsDTO) throws CategoryNotFoundException {
@@ -100,16 +97,19 @@ public class DTOMapper {
                     return comment;
                 })
                 .collect(Collectors.toList());
-
-        // Установка списка комментариев для новости
         news.setComments(comments);
         return news;
     }
-    public Category convertToEntity(CategoryDTO categoryDTO) {
-        Category category = new Category();
-        category.setName(categoryDTO.getName());
-        return category;
+
+    public CommentDTO convertToDTO(Comment comment) {
+        CommentDTO commentDTO = new CommentDTO();
+        commentDTO.setId(comment.getId());
+        commentDTO.setContent(comment.getContent());
+        commentDTO.setAuthor(comment.getAuthor().getId());
+        commentDTO.setNews(comment.getNews().getId());
+        return commentDTO;
     }
+
     public Comment convertToEntity(CommentDTO commentDTO) {
         Comment comment = new Comment();
         comment.setContent(commentDTO.getContent());
@@ -117,7 +117,4 @@ public class DTOMapper {
         comment.setNews(newsRepository.getById(commentDTO.getNews()));
         return comment;
     }
-
-
-    // Методы для преобразования CategoryDTO, NewsDTO и CommentDTO в сущности необходимо определить по аналогии
 }

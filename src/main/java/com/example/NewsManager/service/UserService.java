@@ -3,9 +3,11 @@ import com.example.NewsManager.exception.UserNotFoundException;
 import com.example.NewsManager.model.User;
 import com.example.NewsManager.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -19,14 +21,27 @@ public class UserService {
         //this.passwordEncoder = passwordEncoder;
     }
 
+//    public void registerUser(User user) {
+//        // Проверяем, существует ли пользователь с таким именем
+//        if (userRepository.existsByUsername(user.getUsername())) {
+//            throw new RuntimeException("Такой пользователь уже существует!");
+//        }
+//        user.setPassword(passwordEncoder.encode(user.getPassword()));
+//        userRepository.save(user);
+//    }
     public User createUser(User user) {
+        // Проверяем, существует ли пользователь с таким именем
+//        if (userRepository.existsByUsername(user.getUsername())) {
+//            throw new RuntimeException("Такой пользователь уже существует!");
+//        }
         // Хешируем пароль перед сохранением в базу данных
         //user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public List<User> getAllUsers(PageRequest pageRequest) {
+        Page<User> page = userRepository.findAll(pageRequest);
+        return page.getContent();
     }
 
     public User getUserById(Long id) {
@@ -45,9 +60,8 @@ public class UserService {
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
-    public User getUserByUsername(String username) {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException("User with username " + username + " not found"));
+    public Optional<User> getUserByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 }
 

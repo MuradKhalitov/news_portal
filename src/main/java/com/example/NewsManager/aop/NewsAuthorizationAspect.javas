@@ -1,0 +1,50 @@
+package com.example.NewsManager.aop;
+
+import com.example.NewsManager.exception.AccessDeniedException;
+import com.example.NewsManager.model.News;
+import com.example.NewsManager.service.NewsService;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Aspect
+@Component
+public class NewsAuthorizationAspect {
+    private final NewsService service;
+    public NewsAuthorizationAspect(NewsService service) {
+        this.service = service;
+    }
+
+    @Before("Pointcuts.newsEditOrDelete() && args(newsId, updateNews)")
+    public void aroundUpdatingAdvice(Long newsId, News updateNews) {
+        Long authorId = service.getNewsById(newsId).getAuthor().getId();
+        if (!updateNews.getAuthor().getId().equals(authorId)) {
+            throw new AccessDeniedException("Недостаточно прав для редактирования или удаления новости");
+        }
+    }
+}
+//    public void aroundUpdatingAdvice(ProceedingJoinPoint joinPoint) {
+//        Long newsOldId = null;
+//        News updateNews = null;
+//        MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
+//        if ((methodSignature.getName().equals("updateNews")) || (methodSignature.getName().equals("deleteNews"))) {
+//            Object[] arguments = joinPoint.getArgs();
+//            for (Object arg : arguments) {
+//                if (arg instanceof Long) {
+//                    newsOldId = (Long) arg;
+//                } else if (arg instanceof News) {
+//                    updateNews = (News) arg;
+//                }
+//            }
+//            if (updateNews != null && newsOldId != null) {
+//                Long authorId = service.getNewsById(newsOldId).getAuthor().getId();
+//                if (!updateNews.getAuthor().getId().equals(authorId)) {
+//                    throw new AccessDeniedException("Недостаточно прав для редактирования или удаления новости");
+//                }
+//            }
+//        }
+//    }
+
