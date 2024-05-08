@@ -1,6 +1,6 @@
 -- Создание таблицы пользователей
 CREATE TABLE users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     password VARCHAR(100) NOT NULL
@@ -8,17 +8,17 @@ CREATE TABLE users (
 
 -- Создание таблицы категорий новостей
 CREATE TABLE categories (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) UNIQUE NOT NULL
 );
 
 -- Создание таблицы новостей
 CREATE TABLE news (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     content TEXT NOT NULL,
-    author_id INT,
-    category_id INT,
+    author_id BIGINT,
+    category_id BIGINT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (author_id) REFERENCES users(id),
@@ -27,10 +27,10 @@ CREATE TABLE news (
 
 -- Создание таблицы комментариев
 CREATE TABLE comments (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
     content TEXT NOT NULL,
-    author_id INT,
-    news_id INT,
+    author_id BIGINT,
+    news_id BIGINT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (author_id) REFERENCES users(id),

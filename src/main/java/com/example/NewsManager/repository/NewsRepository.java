@@ -7,9 +7,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface NewsRepository extends JpaRepository<News, Long> {
     @Query("SELECT n FROM News n WHERE n.content = ?1")
     Page<News> findAllByNews(String content, Pageable pageable);
+
+    List<News> findByCategoryId(Long categoryIds);
+    List<News> findByAuthorId(Long authorIds);
 }
 

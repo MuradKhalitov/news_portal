@@ -25,6 +25,22 @@ public class NewsController {
         this.newsService = newsService;
         this.newsMapper = newsMapper;
     }
+    @GetMapping("/filter_by_author")
+    public List<BriefNewsDTO> getFilteredNewsByAuthor(@RequestParam(required = false) Long authorIds) {
+        List<News> filterNewsList = newsService.getFilteredNewsByAuthor(authorIds);
+        List<BriefNewsDTO> briefNewsDTOList = filterNewsList.stream()
+                .map(newsMapper::convertToBriefDTO)
+                .collect(Collectors.toList());
+        return briefNewsDTOList;
+    }
+    @GetMapping("/filter_by_category")
+    public List<BriefNewsDTO> getFilteredNewsByCategory(@RequestParam(required = false) Long categoryIds) {
+        List<News> filterNewsList = newsService.getFilteredNewsByCategory(categoryIds);
+        List<BriefNewsDTO> briefNewsDTOList = filterNewsList.stream()
+                .map(newsMapper::convertToBriefDTO)
+                .collect(Collectors.toList());
+        return briefNewsDTOList;
+    }
 
     @PostMapping("/create")
     public ResponseEntity<NewsDTO> createNews(@RequestBody NewsDTO newsDTO) {

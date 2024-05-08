@@ -5,6 +5,7 @@ import com.example.NewsManager.mapper.UserMapper;
 import com.example.NewsManager.model.User;
 import com.example.NewsManager.service.UserService;
 import jakarta.validation.Valid;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,7 @@ public class UserController {
         this.userService = userService;
         this.userMapper = userMapper;
     }
+
     @PostMapping("/create")
     public ResponseEntity<UserDTO> createUser(@RequestBody @Valid UserDTO userDTO) {
         User user = userMapper.convertToEntity(userDTO);

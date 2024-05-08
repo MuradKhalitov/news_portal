@@ -3,7 +3,6 @@ import com.example.NewsManager.dto.NewsDTO;
 import com.example.NewsManager.dto.response.BriefNewsDTO;
 import com.example.NewsManager.model.Comment;
 import com.example.NewsManager.model.News;
-import org.mapstruct.DecoratedWith;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

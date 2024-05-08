@@ -25,7 +25,7 @@ public class News {
     @ManyToOne
     private Category category;
 
-    @OneToMany(mappedBy = "news")
+    @OneToMany(mappedBy = "news", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
