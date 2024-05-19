@@ -2,9 +2,12 @@ package com.example.NewsManager.config;
 
 import com.example.NewsManager.model.User;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 public class MyUserDetails implements UserDetails {
     private User user;
@@ -15,7 +18,10 @@ public class MyUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+
+        return Arrays.stream(user.getRoles().split(", "))
+        .map(SimpleGrantedAuthority::new)
+        .collect(Collectors.toList());
     }
 
     @Override

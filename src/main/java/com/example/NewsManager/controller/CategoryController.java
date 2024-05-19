@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,6 +26,7 @@ public class CategoryController {
     }
 
     @PostMapping("/create")
+    @PreAuthorize("hasAuthority('ADMIN') || hasAuthority('MODERATOR')")
     public ResponseEntity<CategoryDTO> createCategory(@RequestBody CategoryDTO categoryDTO) {
         Category category = categoryMapper.convertToEntity(categoryDTO);
         Category createdCategory = categoryService.createCategory(category);
@@ -32,6 +34,7 @@ public class CategoryController {
         return new ResponseEntity<>(createdCategoryDTO, HttpStatus.CREATED);
     }
     @GetMapping("/all")
+    @PreAuthorize("hasAuthority('ADMIN') || hasAuthority('USER') || hasAuthority('MODERATOR')")
     public List<CategoryDTO> getAllCategories(@RequestParam(required = false, defaultValue = "0") int page,
                                               @RequestParam(required = false, defaultValue = "2") int size) {
         List<Category> categories = categoryService.getAllCategories(PageRequest.of(page, size));
@@ -42,6 +45,7 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN') || hasAuthority('USER') || hasAuthority('MODERATOR')")
     public ResponseEntity<CategoryDTO> getCategoryById(@PathVariable Long id) {
         Category category = categoryService.getCategoryById(id);
         CategoryDTO categoryDTO = categoryMapper.convertToDTO(category);
@@ -49,6 +53,7 @@ public class CategoryController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN') || hasAuthority('MODERATOR')")
     public ResponseEntity<CategoryDTO> updateCategory(@PathVariable Long id, @RequestBody CategoryDTO categoryDTO) {
         Category category = categoryMapper.convertToEntity(categoryDTO);
         Category updatedCategory = categoryService.updateCategory(id, category);
@@ -57,6 +62,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN') || hasAuthority('MODERATOR')")
     public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
         categoryService.deleteCategory(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

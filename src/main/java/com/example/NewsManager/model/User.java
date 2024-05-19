@@ -1,4 +1,5 @@
 package com.example.NewsManager.model;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,5 +20,6 @@ public class User {
     private String username;
     private String email;
     private String password;
+    private String roles;
 }
 

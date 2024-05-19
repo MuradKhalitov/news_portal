@@ -1,19 +1,15 @@
 package com.example.NewsManager.service;
 
-import com.example.NewsManager.aop.Autentificator;
-
 import com.example.NewsManager.exception.NewsNotFoundException;
 import com.example.NewsManager.model.News;
 import com.example.NewsManager.model.User;
 import com.example.NewsManager.repository.NewsRepository;
 import com.example.NewsManager.repository.UserRepository;
+import com.example.NewsManager.util.CurrentUsers;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -33,7 +29,7 @@ public class NewsService {
     }
 
     public News createNews(News news) {
-        String currentUsername = getCurrentUsername();
+        String currentUsername = CurrentUsers.getCurrentUsername();
         User user = userRepository.findByUsername(currentUsername).get();
         news.setAuthor(user);
         log.info("Пользователь: {}, добавил новость", currentUsername);
@@ -50,7 +46,6 @@ public class NewsService {
                 .orElseThrow(() -> new NewsNotFoundException("News with id " + id + " not found"));
     }
 
-    @Autentificator
     public News updateNews(Long id, News updatedNews) {
         News news = getNewsById(id);
         news.setTitle(updatedNews.getTitle());
@@ -59,23 +54,9 @@ public class NewsService {
         return newsRepository.save(news);
     }
 
-    @Autentificator
+
     public void deleteNews(Long id) {
         newsRepository.deleteById(id);
-    }
-
-    public String getCurrentUsername() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated()) {
-            Object principal = authentication.getPrincipal();
-            if (principal instanceof UserDetails) {
-                return ((UserDetails) principal).getUsername();
-            } else {
-                // Вернуть имя пользователя напрямую, если UserDetails не используется
-                return principal.toString();
-            }
-        }
-        return null;
     }
 
     public List<News> getFilteredNewsByAuthor(Long authorIds) {

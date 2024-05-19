@@ -1,15 +1,18 @@
 package com.example.NewsManager.controller;
 
+import com.example.NewsManager.aop.Autorizator;
 import com.example.NewsManager.dto.UserDTO;
 import com.example.NewsManager.mapper.UserMapper;
 import com.example.NewsManager.model.User;
 import com.example.NewsManager.service.UserService;
+import com.example.NewsManager.util.CurrentUsers;
 import jakarta.validation.Valid;
-import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,6 +40,7 @@ public class UserController {
     }
 
     @GetMapping("/all")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public List<UserDTO> getAllUsers(@RequestParam(required = false, defaultValue = "0") int page,
                                      @RequestParam(required = false, defaultValue = "2") int size) {
         List<User> userList = userService.getAllUsers(PageRequest.of(page, size));
@@ -47,6 +51,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
+    @Autorizator
     public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
         User user = userService.getUserById(id);
         UserDTO userDTO = userMapper.convertToDTO(user);
@@ -54,6 +59,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
+    @Autorizator
     public ResponseEntity<UserDTO> updateUser(@PathVariable Long id, @RequestBody UserDTO userDTO) {
         User user = userMapper.convertToEntity(userDTO);
         User updatedUser = userService.updateUser(id, user);
@@ -62,6 +68,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
+    @Autorizator
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

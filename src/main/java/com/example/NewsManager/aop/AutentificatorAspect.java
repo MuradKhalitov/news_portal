@@ -4,15 +4,14 @@ import com.example.NewsManager.model.Comment;
 import com.example.NewsManager.model.News;
 import com.example.NewsManager.service.CommentService;
 import com.example.NewsManager.service.NewsService;
+import com.example.NewsManager.util.CurrentUsers;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+
 
 @Aspect
 @Component
@@ -39,7 +38,7 @@ public class AutentificatorAspect {
                 }
             }
             if (oldNewsId != null) {
-                String currentUsername = getCurrentUsername();
+                String currentUsername = CurrentUsers.getCurrentUsername();
                 log.info("Пользователь: {}, делает попытку отредактировать или удалить новость", currentUsername);
                 News news = newsService.getNewsById(oldNewsId);
                 if (news.getAuthor().getUsername().equals(currentUsername)) {
@@ -57,7 +56,7 @@ public class AutentificatorAspect {
                 }
             }
             if (oldCommentId != null) {
-                String currentUsername = getCurrentUsername();
+                String currentUsername = CurrentUsers.getCurrentUsername();
                 log.info("Пользователь: {}, делает попытку отредактировать или удалить комментарий", currentUsername);
                 Comment comment = commentService.getCommentById(oldCommentId);
                 if (comment.getAuthor().getUsername().equals(currentUsername)) {
@@ -70,20 +69,6 @@ public class AutentificatorAspect {
         }
         Object result = joinPoint.proceed();
         return result;
-    }
-
-    public String getCurrentUsername() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated()) {
-            Object principal = authentication.getPrincipal();
-            if (principal instanceof UserDetails) {
-                return ((UserDetails) principal).getUsername();
-            } else {
-                // Вернуть имя пользователя напрямую, если UserDetails не используется
-                return principal.toString();
-            }
-        }
-        return null;
     }
 }
 
